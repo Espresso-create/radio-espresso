@@ -37,7 +37,7 @@ footer{color:#9baccc;font-size:13px;padding:30px}
 <div class="player">
 <p class="live">● RADIO ESPRESSO</p>
 <h2>MUZYKA BEZ GRANIC</h2>
-<button onclick="playRadio()">▶ SŁUCHAJ RADIA</button>
+<button id="radioButton" onclick="playRadio()">▶ SŁUCHAJ RADIA</button>
 <p id="status">Wkrótce start transmisji</p>
 <audio id="radio"></audio>
 </div>
@@ -46,14 +46,21 @@ footer{color:#9baccc;font-size:13px;padding:30px}
 const streamURL="http://radioespresso.duckdns.org:8000/radio.mp3";
 const radio=document.getElementById("radio");
 function playRadio(){
-if(!streamURL){
-document.getElementById("status").textContent="Czekamy na uruchomienie AzuraCast";
-return;
-}
-radio.src=streamURL;
-radio.play().catch(()=>{
-document.getElementById("status").textContent="Nie udało się odtworzyć transmisji";
-});
+ const btn=document.getElementById("radioButton");
+ const status=document.getElementById("status");
+ if(!radio.paused){
+   radio.pause();
+   btn.textContent="▶ SŁUCHAJ RADIA";
+   status.textContent="Radio zatrzymane";
+   return;
+ }
+ radio.src=streamURL;
+ radio.play().then(()=>{
+   btn.textContent="⏸ ZATRZYMAJ RADIO";
+   status.textContent="🔴 RADIO ESPRESSO NADAJE NA ŻYWO";
+ }).catch(()=>{
+   status.textContent="Nie udało się uruchomić radia";
+ });
 }
 </script>
 </body>
