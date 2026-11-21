@@ -126,6 +126,31 @@ audio.addEventListener('playing',()=>{playingStarted=true;status('RADIO ESPRESSO
 audio.addEventListener('pause',update);
 audio.addEventListener('waiting',()=>status('Łączenie z radiem…'));
 audio.addEventListener('error',()=>status('Brak połączenia ze strumieniem radia.',true));
+  
+function aktualnaAudycja() {
+  const czesci = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Berlin',
+    hour: '2-digit',
+    hour12: false
+  }).formatToParts(new Date());
+
+  const godzina = Number(czesci.find(c => c.type === 'hour').value);
+
+  if (godzina >= 18 && godzina < 22) return 'MINIMAL RAVE';
+  if (godzina >= 22 || godzina < 2) return 'POETYCKA NOC';
+  return 'CHILL & FLOW';
+}
+
+function pokazAudycje() {
+  if (!audio.paused && !audio.error && audio.readyState >= 2) {
+    status('Teraz gramy: ' + aktualnaAudycja());
+  }
+}
+
+audio.addEventListener('playing', pokazAudycje);
+audio.addEventListener('pause', () => status(''));
+setInterval(pokazAudycje, 30000);
+
 shareBtn.addEventListener('click',async()=>{
   const payload={title:'RADIO ESPRESSO',text:'Posłuchaj RADIO ESPRESSO',url:PAGE_URL};
   if(navigator.share){try{await navigator.share(payload);return;}catch(e){if(e.name==='AbortError')return;}}
