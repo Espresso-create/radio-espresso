@@ -31,6 +31,16 @@
 #volume-icon{color:#f1c86e;font-size:17px}
 #volume{width:100%;min-width:0;accent-color:#e7b65c;cursor:pointer}
 #volume-value{color:#f1c86e;font-size:12px;min-width:30px;text-align:right}
+  
+#ramowka-btn{position:absolute;top:82%;left:50%;transform:translateX(-50%);z-index:10;background:transparent;border:0;color:#f7d88a;font-size:14px;font-weight:600;letter-spacing:2px;text-shadow:0 2px 6px #000;cursor:pointer;white-space:nowrap}
+
+#ramowka-okno{background:rgba(18,12,9,.96);color:#f7d88a;border:1px solid #d7a74e;border-radius:16px;padding:24px 20px;text-align:center;width:85%;max-width:340px;box-sizing:border-box;box-shadow:0 10px 40px #0009}
+#ramowka-okno::backdrop{background:rgba(0,0,0,.65)}
+#ramowka-okno h2{font-size:22px;margin:0 0 8px}
+#ramowka-okno p{font-size:14px;margin:15px 0}
+#ramowka-okno .ramowka-podtytul{font-size:11px;letter-spacing:2px;color:#fff}
+#ramowka-zamknij{margin-top:12px;background:transparent;color:#f7d88a;border:1px solid #d7a74e;border-radius:20px;padding:10px 22px;cursor:pointer}
+
 
 @media(min-width:750px){.scene{height:100dvh;width:56.28dvh;box-shadow:0 0 60px #000}}
 @media(prefers-reduced-motion:reduce){#status{transition:none}}
@@ -50,8 +60,22 @@
 </div>
 
     <p id="listeners" aria-label="Aktualna liczba słuchaczy"></p>
+    
+<button id="ramowka-btn" type="button" aria-label="Pokaż ramówkę radia">☷ RAMÓWKA</button>
+
     <button class="hotspot" id="share" type="button" aria-label="Udostępnij radio" title="Udostępnij radio"></button>
   </div>
+  
+<dialog id="ramowka-okno" aria-label="Ramówka RADIO ESPRESSO">
+  <h2>☕ RADIO ESPRESSO</h2>
+  <p class="ramowka-podtytul">NASZA RAMÓWKA 24/7</p>
+  <p>06:00–18:00 · CHILL & FLOW</p>
+  <p>18:00–22:00 · MINIMAL RAVE</p>
+  <p>22:00–02:00 · POETYCKA NOC</p>
+  <p>02:00–06:00 · NOCNY CHILL</p>
+  <button id="ramowka-zamknij" type="button">ZAMKNIJ ✕</button>
+</dialog>
+
   <audio id="audio" preload="none" playsinline></audio>
 </main>
 <script>
@@ -159,6 +183,15 @@ shareBtn.addEventListener('click',async()=>{
     status('Link do radia skopiowany');
   }catch(e){window.prompt('Skopiuj link do radia:',PAGE_URL);}
 });
+  
+const ramowkaOkno = document.getElementById('ramowka-okno');
+document.getElementById('ramowka-btn').addEventListener('click', () => {
+  ramowkaOkno.showModal();
+});
+document.getElementById('ramowka-zamknij').addEventListener('click', () => {
+  ramowkaOkno.close();
+});
+
 </script>
 </body>
 </html>
