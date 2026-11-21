@@ -41,6 +41,9 @@
 #ramowka-okno .ramowka-podtytul{font-size:11px;letter-spacing:2px;color:#fff}
 #ramowka-zamknij{margin-top:12px;background:transparent;color:#f7d88a;border:1px solid #d7a74e;border-radius:20px;padding:10px 22px;cursor:pointer}
 
+#ramowka-okno p.audycja-teraz{color:#ffe5a0;font-weight:700;text-shadow:0 0 9px rgba(255,200,85,.65)}
+.audycja-teraz::after{content:"  TERAZ";font-size:10px;letter-spacing:1px;color:#ffe5a0}
+
 
 @media(min-width:750px){.scene{height:100dvh;width:56.28dvh;box-shadow:0 0 60px #000}}
 @media(prefers-reduced-motion:reduce){#status{transition:none}}
@@ -69,10 +72,12 @@
 <dialog id="ramowka-okno" aria-label="Ramówka RADIO ESPRESSO">
   <h2>☕ RADIO ESPRESSO</h2>
   <p class="ramowka-podtytul">NASZA RAMÓWKA 24/7</p>
-  <p>06:00–18:00 · CHILL & FLOW</p>
-  <p>18:00–22:00 · MINIMAL RAVE</p>
-  <p>22:00–02:00 · POETYCKA NOC</p>
-  <p>02:00–06:00 · NOCNY CHILL</p>
+ 
+<p id="audycja-chill">06:00–18:00 · CHILL & FLOW</p>
+<p id="audycja-rave">18:00–22:00 · MINIMAL RAVE</p>
+<p id="audycja-poezja">22:00–02:00 · POETYCKA NOC</p>
+<p id="audycja-noc">02:00–06:00 · NOCNY CHILL</p>
+
   <button id="ramowka-zamknij" type="button">ZAMKNIJ ✕</button>
 </dialog>
 
@@ -191,6 +196,29 @@ document.getElementById('ramowka-btn').addEventListener('click', () => {
 document.getElementById('ramowka-zamknij').addEventListener('click', () => {
   ramowkaOkno.close();
 });
+
+function oznaczAktualnaAudycje() {
+  const czesci = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Berlin',
+    hour: '2-digit',
+    hour12: false
+  }).formatToParts(new Date());
+
+  const godzina = Number(czesci.find(c => c.type === 'hour').value);
+
+  let aktywna;
+  if (godzina >= 18 && godzina < 22) aktywna = 'audycja-rave';
+  else if (godzina >= 22 || godzina < 2) aktywna = 'audycja-poezja';
+  else if (godzina >= 2 && godzina < 6) aktywna = 'audycja-noc';
+  else aktywna = 'audycja-chill';
+
+  ['audycja-chill', 'audycja-rave', 'audycja-poezja', 'audycja-noc'].forEach(id => {
+    document.getElementById(id).classList.toggle('audycja-teraz', id === aktywna);
+  });
+}
+
+oznaczAktualnaAudycje();
+setInterval(oznaczAktualnaAudycje, 30000);
 
 </script>
 </body>
