@@ -73,11 +73,11 @@
   <h2>☕ RADIO ESPRESSO</h2>
   <p class="ramowka-podtytul">NASZA RAMÓWKA 24/7</p>
  
-<p id="audycja-chill">06:00–18:00 · CHILL & FLOW</p>
+<p id="audycja-chill">06:00–15:00 · CHILL & FLOW</p>
 <p id="audycja-rave">18:00–22:00 · MINIMAL RAVE</p>
-<p id="audycja-poezja">22:00–02:00 · POETYCKA NOC</p>
+<p id="audycja-poezja">15:00–18:00 · GŁOSEM I SERCEM</p>
 
-<p id="audycja-noc">02:00–06:00 · NIGHT CHILL</p>
+<p id="audycja-noc">22:00–06:00 · NIGHT CHILL</p>
 
 
   <button id="ramowka-zamknij" type="button">ZAMKNIJ ✕</button>
@@ -168,9 +168,9 @@ function aktualnaAudycja() {
   const godzina = Number(czesci.find(c => c.type === 'hour').value);
 
   if (godzina >= 18 && godzina < 22) return 'MINIMAL RAVE';
-  if (godzina >= 22 || godzina < 2) return 'POETYCKA NOC';
+  if (godzina >= 15 && godzina < 18) return 'GŁOSEM I SERCEM';
   
-if (godzina >= 2 && godzina < 6) return 'NIGHT CHILL';
+if (godzina >= 22 || godzina < 6) return 'NIGHT CHILL';
 
   return 'CHILL & FLOW';
 }
@@ -213,8 +213,8 @@ function oznaczAktualnaAudycje() {
 
   let aktywna;
   if (godzina >= 18 && godzina < 22) aktywna = 'audycja-rave';
-  else if (godzina >= 22 || godzina < 2) aktywna = 'audycja-poezja';
-  else if (godzina >= 2 && godzina < 6) aktywna = 'audycja-noc';
+  else if (godzina >= 15 && godzina < 18) aktywna = 'audycja-poezja';
+  else if (godzina >= 22 || godzina < 6) aktywna = 'audycja-noc';
   else aktywna = 'audycja-chill';
 
   ['audycja-chill', 'audycja-rave', 'audycja-poezja', 'audycja-noc'].forEach(id => {
