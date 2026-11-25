@@ -1,0 +1,25 @@
+{
+  "name": "RADIO ESPRESSO 24/7",
+  "short_name": "RADIO ESPRESSO",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#100905",
+  "theme_color": "#100905",
+  "lang": "pl",
+  "icons": [
+    {
+      "src": "espresso-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "espresso-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
