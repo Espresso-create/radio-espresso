@@ -236,5 +236,89 @@ setInterval(oznaczAktualnaAudycje, 30000);
    style="position:fixed;right:8px;top:70%;z-index:9999;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid #f5d48b;background:#28170c;color:#f5d48b;font-size:25px;text-decoration:none;box-shadow:0 3px 12px #0009;">
   &#128172;
 </a>
+  
+<button id="sleep-btn" type="button"
+  aria-label="Wyłącznik czasowy"
+  style="position:fixed;left:8px;top:70%;z-index:9999;width:48px;height:48px;border-radius:50%;border:2px solid #f5d48b;background:#28170c;color:#f5d48b;font-size:29px;cursor:pointer;box-shadow:0 3px 12px #0009;">
+  ☾
+</button>
+
+<dialog id="sleep-okno" style="background:#18100b;color:#f5d48b;border:1px solid #d7a74e;border-radius:16px;padding:24px;text-align:center;width:85%;max-width:340px;">
+  <h2>☾ SLEEP TIMER</h2>
+  <p>Wyłącz radio za:</p>
+  <style>
+    #sleep-okno::backdrop {
+      background:rgba(0,0,0,.65);
+    }
+    #sleep-okno button {
+      background:#28170c;
+      color:#f5d48b;
+      border:1px solid #d7a74e;
+      border-radius:20px;
+      padding:10px 16px;
+      margin:4px;
+      cursor:pointer;
+    }
+  </style>
+
+  <button onclick="espressoSleep(15)">15 min</button>
+  <button onclick="espressoSleep(30)">30 min</button>
+  <button onclick="espressoSleep(60)">60 min</button>
+  <button onclick="espressoSleep(90)">90 min</button>
+
+  <p id="sleep-info">Timer nieaktywny</p>
+
+  <button onclick="espressoSleep(0)">Anuluj timer</button>
+  <button onclick="document.getElementById('sleep-okno').close()">Zamknij</button>
+</dialog>
+
+<script>
+(() => {
+  let deadline = 0;
+  let timer = null;
+  const btn = document.getElementById('sleep-btn');
+  const dialog = document.getElementById('sleep-okno');
+  const info = document.getElementById('sleep-info');
+
+  function checkTimer() {
+    if (!deadline) return;
+    const remaining = deadline - Date.now();
+
+    if (remaining <= 0) {
+      window.espressoSleep(0);
+      document.getElementById('pause').click();
+      return;
+    }
+
+    const minutes = Math.ceil(remaining / 60000);
+    info.textContent = 'Pozostało: ' + minutes + ' min';
+    btn.textContent = minutes + 'm';
+    btn.style.fontSize = '14px';
+  }
+
+  window.espressoSleep = function(minutes) {
+    clearInterval(timer);
+    deadline = 0;
+    btn.textContent = '☾';
+    btn.style.fontSize = '29px';
+    info.textContent = 'Timer nieaktywny';
+
+    if (minutes > 0) {
+      deadline = Date.now() + minutes * 60000;
+      checkTimer();
+      timer = setInterval(checkTimer, 1000);
+    }
+  };
+
+  btn.addEventListener('click', () => {
+    checkTimer();
+    dialog.showModal();
+  });
+
+  document.addEventListener('visibilitychange', checkTimer);
+  window.addEventListener('pageshow', checkTimer);
+})();
+</script>
+
 </body>
 </html>
