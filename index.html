@@ -241,7 +241,26 @@ setInterval(oznaczAktualnaAudycje, 30000);
    style="position:fixed;right:8px;top:70%;z-index:9999;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid #f5d48b;background:#28170c;color:#f5d48b;font-size:25px;text-decoration:none;box-shadow:0 3px 12px #0009;">
   &#128172;
 </a>
-  
+  <script>
+(() => {
+  const chat = document.querySelector(
+    'a[aria-label="Czat słuchaczy RADIO ESPRESSO"]'
+  );
+
+  if (!chat || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const pulsowanie = chat.animate(
+    [
+      { backgroundColor: '#28170c', boxShadow: '0 3px 12px #0009', transform: 'scale(1)' },
+      { backgroundColor: '#ffeb3b', boxShadow: '0 0 18px rgba(255,235,59,.85)', transform: 'scale(1.06)' },
+      { backgroundColor: '#28170c', boxShadow: '0 3px 12px #0009', transform: 'scale(1)' }
+    ],
+    { duration: 1500, iterations: Infinity, easing: 'ease-in-out' }
+  );
+
+  chat.addEventListener('click', () => pulsowanie.cancel(), { once: true });
+})();
+</script>
 <button id="sleep-btn" type="button"
   aria-label="Wyłącznik czasowy"
   style="position:fixed;left:8px;top:70%;z-index:9999;width:48px;height:48px;border-radius:50%;border:2px solid #f5d48b;background:#28170c;color:#f5d48b;font-size:29px;cursor:pointer;box-shadow:0 3px 12px #0009;">
