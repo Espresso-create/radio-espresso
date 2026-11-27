@@ -31,6 +31,12 @@
 #status{position:absolute;top:57.3%;left:11%;width:78%;margin:0;text-align:center;font-size:clamp(12px,2.9vw,17px);line-height:1.4;color:#fff3d9;text-shadow:0 2px 6px #000,0 0 10px #000;pointer-events:none;opacity:0;transition:opacity .2s}
 #status.show{opacity:1}
 #status.error{color:#ffe7d5;background:rgba(48,8,7,.79);padding:9px 12px;border-radius:10px}
+#track-title{position:absolute;top:60%;left:8%;width:84%;margin:0;overflow:hidden;white-space:nowrap;text-align:center;color:#f7d88a;font-size:clamp(13px,3.1vw,18px);font-weight:600;line-height:1.4;text-shadow:0 2px 6px #000,0 0 10px #000;pointer-events:none;opacity:0;transition:opacity .2s}
+#track-title.visible{opacity:1}
+#track-title span{display:inline-block;white-space:nowrap}
+#track-title.scrolling span{padding-left:100%;animation:track-marquee 16s linear infinite}
+@keyframes track-marquee{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+@media(prefers-reduced-motion:reduce){#track-title.scrolling span{padding-left:0;animation:none}}
 #listeners{position:absolute;top:84.5%;right:5%;margin:0;padding:3px 9px;border-radius:999px;color:#f7d88a;background:rgba(20,10,8,.42);font-size:clamp(11px,2.45vw,14px);line-height:1.3;text-shadow:0 1px 3px #000;pointer-events:none;display:none;white-space:nowrap}
 #listeners.visible{display:block}
   
@@ -62,6 +68,7 @@
     <button class="hotspot" id="play" type="button" aria-label="Włącz radio" title="Włącz radio"></button>
     <button class="hotspot" id="pause" type="button" aria-label="Zatrzymaj radio" title="Zatrzymaj radio"></button>
     <p id="status" role="status" aria-live="polite"></p>
+    <p id="track-title" aria-live="polite" aria-label="Aktualnie grany utwór"><span></span></p>
     
 <div id="volume-control">
   <span id="volume-icon">♫</span>
@@ -115,6 +122,32 @@ const pauseBtn=document.getElementById('pause');
 const shareBtn=document.getElementById('share');
 const statusEl=document.getElementById('status');
 const listenersEl=document.getElementById('listeners');
+const trackTitleEl=document.getElementById('track-title');
+let currentTrackText='';
+function renderCurrentTrack(){
+  const trackSpan=trackTitleEl.querySelector('span');
+  if(audio.paused||!playingStarted||!currentTrackText){
+    trackTitleEl.classList.remove('visible','scrolling');
+    return;
+  }
+  if(trackSpan.textContent!==currentTrackText){
+    trackSpan.textContent=currentTrackText;
+    trackTitleEl.classList.remove('scrolling');
+    requestAnimationFrame(()=>{
+      if(trackSpan.scrollWidth>trackTitleEl.clientWidth+2)trackTitleEl.classList.add('scrolling');
+    });
+  }
+  trackTitleEl.classList.add('visible');
+}
+function setCurrentTrack(data){
+  const song=data?.now_playing?.song;
+  const artist=typeof song?.artist==='string'?song.artist.trim():'';
+  const title=typeof song?.title==='string'?song.title.trim():'';
+  const text=[artist,title].filter(Boolean).join(' — ')||
+    (typeof song?.text==='string'?song.text.trim():'');
+  if(text&&!/^(unknown|no song|not found)$/i.test(text))currentTrackText=text;
+  renderCurrentTrack();
+}
 const NOW_PLAYING_URL='https://radioespresso.duckdns.org/api/nowplaying/radio_espresso_247';
 async function updateListeners(){
   try{
@@ -125,6 +158,7 @@ async function updateListeners(){
     finally{clearTimeout(timeout);}
     if(!response.ok)throw new Error('Błąd danych');
     const data=await response.json();
+    setCurrentTrack(data);
     const count=data?.listeners?.current;
     if(!Number.isInteger(count)||count<0)throw new Error('Brak danych');
     listenersEl.textContent='🎧 Teraz słucha: '+count;
@@ -160,8 +194,8 @@ pauseBtn.addEventListener('click',()=>{
   status('Radio zatrzymane');
   update();
 });
-audio.addEventListener('playing',()=>{playingStarted=true;status('RADIO ESPRESSO — NA ŻYWO');update();});
-audio.addEventListener('pause',update);
+audio.addEventListener('playing',()=>{playingStarted=true;status('RADIO ESPRESSO — NA ŻYWO');update();updateListeners();renderCurrentTrack();});
+audio.addEventListener('pause',()=>{renderCurrentTrack();update();});
 audio.addEventListener('waiting',()=>status('Łączenie z radiem…'));
 audio.addEventListener('error',()=>status('Brak połączenia ze strumieniem radia.',true));
   
@@ -346,3 +380,4 @@ setInterval(oznaczAktualnaAudycje, 30000);
 
 </body>
 </html>
+
